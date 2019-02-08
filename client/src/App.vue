@@ -1,23 +1,37 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
-  </div>
+<v-app>
+    <div id="app">
+        <app-header></app-header>
+        <v-content>
+             <sign-in elevation=20 temporary v-on:signin="showSignin=!showSignin" v-if="showSignin" ></sign-in>   
+<!--             <button v-on:click="sign=!sign">регистрация</button>-->
+        <main-part v-if="!showSignin" ></main-part>
+        </v-content>
+        <Footer></Footer>
+    </div>
+</v-app>
 </template>
 
 <script>
-export default {
-  name: 'App'
-}
+    import SignIn from '@/components/SignIn'
+    import AppHeader from '@/components/AppHeader'
+    import MainPart from '@/components/MainPart'
+    import Footer from '@/components/Footer'
+    
+    export default{
+         data(){
+                return{
+                    showSignin:true
+                }
+        },
+        methods:{
+            
+        },
+        components:{
+            SignIn,
+            AppHeader,
+            MainPart,
+            Footer
+        },
+    }
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
