@@ -3,9 +3,9 @@
     <div id="app">
         <app-header></app-header>
         <v-content>
-            <sign-in elevation=20 temporary v-on:signin="showSignin=!showSignin" v-if="showSignin" ></sign-in>   
-
-            <main-part v-if="!showSignin" ></main-part>
+             <sign-in elevation=20 temporary v-on:signin="showSignin=!showSignin" v-if="showSignin" ></sign-in>   
+<!--             <button v-on:click="sign=!sign">регистрация</button>-->
+        <main-part v-if="!showSignin" ></main-part>
         </v-content>
         <Footer></Footer>
     </div>
