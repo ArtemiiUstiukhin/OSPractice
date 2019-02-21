@@ -7,10 +7,10 @@
 
             <v-divider></v-divider>
 
-            <v-list-tile v-for="(note,index) in notes" :key="index" @click=setCurrentNote(note) >
+            <v-list-tile v-for="(note,index) in notes" :key="index" >
                
                 <v-list-tile-content >
-                    <v-list-tile-title v-html="note.id"></v-list-tile-title>
+                    <v-list-tile-title v-html="note"></v-list-tile-title>
                 </v-list-tile-content>
             </v-list-tile>
                                     
@@ -21,13 +21,11 @@
     export default{
         data:()=> ({
             
-        
+            
         }),
         methods:{
-            setCurrentNote: function(note){
-                this.$store.dispatch('setCurrentNote',note)}
+
         },
-	
         computed:{
             
             notes(){

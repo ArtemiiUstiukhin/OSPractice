@@ -61,11 +61,11 @@
                 </v-card> 
             </v-flex>
         </v-layout>
-        <v-layout  >
-            <v-flex d-flex grid class="form-bottom" >
-                <v-card color="grey lighten-4" mx-3>
+        <v-layout>
+            <v-flex d-flex grid class="form-bottom">
+                <v-card color="grey lighten-4">
                     <v-card-title class="title px-3 pb-2 pt-3">События</v-card-title>
-                    <EventTable ></EventTable>
+                    <v-card-text> 3 </v-card-text>
                 </v-card>
             </v-flex>
         </v-layout>
@@ -79,7 +79,6 @@
 <script>
     import Navigation from '@/components/Navigation'
     import ListNotes from '@/components/ListNotes'
-    import EventTable from '@/components/EventTable'
     
     export default{
         data:()=> ({
@@ -103,8 +102,7 @@
         }),
         components:{           
             Navigation,
-            ListNotes,
-            EventTable
+            ListNotes
         },
         methods:{
             ViewModeSwitch: function(item){
@@ -120,9 +118,6 @@
                 // Without setTimeout this.selectedRootGroup have a previous value
             }
         },
-	beforeMount () {
-	    this.$store.dispatch('isGroups')
-	},
         computed:{
             items(){
                 return this.$store.getters.getItems

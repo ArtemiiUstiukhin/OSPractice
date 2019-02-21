@@ -1,0 +1,14 @@
+aiohttp==3.0.1
+aiohttp_debugtoolbar==0.4.1
+aiohttp_jinja2==0.15
+aiohttp_session[secure]==2.4.0
+aiodns
+cchardet
+cffi
+cryptography
+envparse
+ipython==4.2.1
+ipdb
+jinja2==2.10
+motor==1.2.1
+pymongo==3.6.0
