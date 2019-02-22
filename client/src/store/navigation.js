@@ -388,6 +388,9 @@ export default{
             ]
     },
     mutations:{
+	set_item_list (state,payload){
+	    state.items=payload
+	},
         set_root_group(state,payload){
             state.root_group=payload
         },
@@ -404,14 +407,17 @@ export default{
     
     },
     actions:{
-        isGroups(){
+        isGroups(context){
            axios
             .get("http://localhost:8080/statj")
             .then(response =>{
-                  this.items=response.data;
-		  console.log(response.data);
-		  console.log(this);
-	
+                  //this.items=response.data;
+		  //console.log(response.data);
+		  //console.log(this);
+		  //console.log(this.items);
+		  //console.log(state);
+		  context.commit('set_item_list', response.data);
+		  console.log("!end function!");
                   })
             .catch(error =>{
                   console.log(error);
@@ -444,7 +450,12 @@ export default{
         
     },
     getters:{
-        getItems: (state) => state.items,
+        getItems: (state,actions) => {
+		//console.log(actions);
+		//console.log(this);
+		//actions.isGroups();
+		return 	state.items
+	},
 // 	getItems: (state) => actions.isGroups,
         getPlacemarks:(state)=> state.placemarks,
         getMapCoords:(state)=> state.map_coords,

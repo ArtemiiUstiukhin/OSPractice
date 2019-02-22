@@ -120,8 +120,11 @@
                 // Without setTimeout this.selectedRootGroup have a previous value
             }
         },
-	beforeMount () {
-	    this.$store.dispatch('isGroups')
+	mounted: function(){
+		this.$nextTick(function (){
+			this.$store.dispatch('isGroups',this);
+			
+		})
 	},
         computed:{
             items(){
@@ -136,13 +139,7 @@
             mapCoords(){
                 return this.$store.getters.getMapCoords
             },
-            
-            
-            
-            
-        }
-            
-
+	}
     }
 </script>
 
