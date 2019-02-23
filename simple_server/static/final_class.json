@@ -1,0 +1,27 @@
+[
+    {
+      "id": "class_id",
+      "name": "class_name",
+      "children": [
+        {
+          "id": "obj_id",
+          "name": "obj_name",
+	  "type": "obj_type",
+          "notes": [
+            {
+              "id": "note_id",
+              "events": [
+                {
+                  "id": "event_id",
+                  "data": "event_data",
+                  "device": "6.0",
+                  "ip": "24",
+                  "priority": "4.0"
+                }
+              ]
+            }
+	    ]
+	}
+	]
+     }
+]

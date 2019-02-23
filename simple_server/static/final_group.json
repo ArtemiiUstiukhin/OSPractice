@@ -1,0 +1,30 @@
+[
+    {
+      "id": "group_id",
+      "type":"group_type",
+      "name": "group_name",
+      "remark": "group_remark",
+      "children": [
+        {
+          "id": "obj_id",
+          "name": "obj_name",
+	  "type": "obj_type",
+	  "remark": "obj_remark",
+          "notes": [
+            {
+              "id": "note_id",
+              "events": [
+                {
+                  "id": "event_id",
+                  "data": "event_data",
+                  "device": "6.0",
+                  "ip": "24",
+                  "priority": "4.0"
+                }
+              ]
+            }
+	    ]
+	}
+	]
+     }
+]

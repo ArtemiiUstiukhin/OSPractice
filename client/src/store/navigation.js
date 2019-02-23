@@ -409,7 +409,7 @@ export default{
     actions:{
         isGroups(context){
            axios
-            .get("http://localhost:8080/statj")
+            .get("http://localhost:8080/statj",{params: { sortby: 'class' }})
             .then(response =>{
                   //this.items=response.data;
 		  //console.log(response.data);
