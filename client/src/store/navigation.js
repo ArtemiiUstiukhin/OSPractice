@@ -407,17 +407,17 @@ export default{
     
     },
     actions:{
-        isGroups(context){
+        isGroups(context,payload){
+	   console.log(payload);
            axios
-            .get("http://localhost:8080/statj",{params: { sortby: 'class' }})
+            //.get("http://localhost:8080/statj",{params: { sortby: 'group' }})
+            ({method:'get',
+	      url:'http://localhost:8080/statj',
+	      params: { sortby: payload.sort_type }})
             .then(response =>{
-                  //this.items=response.data;
-		  //console.log(response.data);
-		  //console.log(this);
-		  //console.log(this.items);
-		  //console.log(state);
+		  console.log(response.data);
 		  context.commit('set_item_list', response.data);
-		  console.log("!end function!");
+		  console.log("foo isGroup");
                   })
             .catch(error =>{
                   console.log(error);
@@ -450,18 +450,12 @@ export default{
         
     },
     getters:{
-        getItems: (state,actions) => {
-		//console.log(actions);
-		//console.log(this);
-		//actions.isGroups();
-		return 	state.items
-	},
-// 	getItems: (state) => actions.isGroups,
+        getItems: (state) => state.items,
         getPlacemarks:(state)=> state.placemarks,
         getMapCoords:(state)=> state.map_coords,
         getNotes:(state)=>{
               var item=state.current_obj
-              return item.notes  
+              return item.notes
         },
         getEvents: (state)=>{
                     var note  = state.current_note
