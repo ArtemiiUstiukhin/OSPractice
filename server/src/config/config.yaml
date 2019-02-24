@@ -1,0 +1,9 @@
+oracle:
+  database: XE
+  user: system
+  password: 12345
+  host: localhost
+  port: 1521
+
+host: localhost
+port: 8000
