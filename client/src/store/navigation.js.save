@@ -8,8 +8,7 @@ export default{
         map_coords:[59.94, 30.32],
         current_obj:{},
         current_note:{},
-        
-	items:[],
+        items:[{id:'909'},{id:'88'}],
 	/*
 	items: [
             {
@@ -388,9 +387,6 @@ export default{
             ]
     },
     mutations:{
-	set_item_list (state,payload){
-	    state.items=payload
-	},
         set_root_group(state,payload){
             state.root_group=payload
         },
@@ -407,17 +403,12 @@ export default{
     
     },
     actions:{
-        isGroups(context,payload){
-	   console.log(payload);
+        isGroups(){
            axios
-            .get("http://localhost:8000/group_representation")
-            //({method:'get',
-	     // url:'http://localhost:8000/group_representation',
-	      //params: { sortby: payload.sort_type }})
+            .get("http://localhost:8080/statj")
             .then(response =>{
-		  console.log(response.data);
-		  context.commit('set_item_list', response.data);
-		  console.log("foo isGroup");
+                  this.items=response.data
+		  console.log(response.data)
                   })
             .catch(error =>{
                   console.log(error);
@@ -450,12 +441,15 @@ export default{
         
     },
     getters:{
-        getItems: (state) => state.items,
+        getItems: (state) => {
+			
+state.items,
+//	getItems: (state) => 
         getPlacemarks:(state)=> state.placemarks,
         getMapCoords:(state)=> state.map_coords,
         getNotes:(state)=>{
               var item=state.current_obj
-              return item.notes
+              return item.notes  
         },
         getEvents: (state)=>{
                     var note  = state.current_note

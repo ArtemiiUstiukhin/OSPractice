@@ -97,61 +97,6 @@ async def representation(request):
     return web.json_response(data=result, headers=[('Access-Control-Allow-Origin', '*')],
                             content_type='application/json', dumps=json.dumps)
 
-async def replace_groups(result):
-    str = json.dumps(result)
-    str = str.replace("DEVICE_GROUP_ID","id")
-    str = str.replace("GROUP_NAME","name")
-    str = str.replace("GROUP_REMARK","remark")
-    str = str.replace("GROUP_TYPE_ID","type")
-    final = json.loads(str)
-    return  final
-
-
-async def group_representation_old(request):
-    sql = '''select dg.device_group_id,
-                    dg.par_group_id,
-                    dg.group_name,
-                    dg.group_remark,
-                    dg.group_type_id
-             from os_eqm.device_groups dg
-             connect by prior dg.device_group_id = dg.par_group_id
-          '''
-    groups = dbquery(sql)
-    groups = replace_groups(groups)
-    for group in groups:
-        group.setdefault("children",[])
-    devices = get_all_devices()
-    for device in devices:
-        for group in groups:
-            if device["grid"]==group["id"]:
-                group["children"].append(device)
-                break
-
-    return web.json_response(data=groups, headers=[('Access-Control-Allow-Origin', '*')],
-                            content_type='application/json', dumps=json.dumps)
-
-async def get_all_devices():
-    sql = '''SELECT d.DEVICE_ID,
-                    d.DEVICE_TYPE,
-                    d.GROUP_ID,
-                    d."remark",
-                    d."device_name"
-            from OS_EQM.DEVICES d
-          '''
-    result = dbquery(sql)
-    return replace_devices(result)
-
-
-async def replace_devices(result):
-    str = json.dumps(result)
-    str = str.replace("DEVICE_ID","id")
-    str = str.replace("DEVICE_TYPE","type")
-    str = str.replace("NAME","name")
-    str = str.replace("GROUP_ID","grid")
-    final = json.loads(str)
-    return  final
-
-
 async def group_representation(request):
     sql = '''select dg.device_group_id,
                     dg.par_group_id,
@@ -161,7 +106,8 @@ async def group_representation(request):
              from os_eqm.device_groups dg
              connect by prior dg.device_group_id = dg.par_group_id
           '''
-    try:
+    
+try:
         db_url = DSN.format(**config['oracle'])
         conn = cx_Oracle.connect(db_url)
         cursor = conn.cursor()
@@ -171,47 +117,5 @@ async def group_representation(request):
             result = [dict(zip([desc[0] for desc in row.description], col)) for col in row.fetchall()]
     finally:
         cursor.close()
-
-    str = json.dumps(result)
-    str = str.replace("DEVICE_GROUP_ID","id")
-    str = str.replace("GROUP_NAME","name")
-    str = str.replace("GROUP_REMARK","remark")
-    str = str.replace("GROUP_TYPE_ID","type")
-    groups = json.loads(str)
-
-    for group in groups:
-        group.setdefault("children",[])
-    sql = '''SELECT d.DEVICE_ID,
-                    d.DEVICE_TYPE,
-                    d.GROUP_ID,
-                    d."remark",
-                    d."device_name"
-            from OS_EQM.DEVICES d
-          '''
-    try:
-        db_url = DSN.format(**config['oracle'])
-        conn = cx_Oracle.connect(db_url)
-        cursor = conn.cursor()
-        row = cursor.execute(sql)
-        resultd = None
-        if row:
-            resultd = [dict(zip([desc[0] for desc in row.description], col)) for col in row.fetchall()]
-    finally:
-        cursor.close()
-
-    str = json.dumps(resultd)
-    str = str.replace("DEVICE_ID","id")
-    str = str.replace("DEVICE_TYPE","type")
-    str = str.replace("NAME","name")
-    str = str.replace("GROUP_ID","grid")
-    devices = json.loads(str)
-
-    for device in devices:
-        for group in groups:
-            if device["grid"]==group["id"]:
-                group["children"].append(device)
-                break
-
-    return web.json_response(data=groups, headers=[('Access-Control-Allow-Origin', '*')],
+    return web.json_response(data=result, headers=[('Access-Control-Allow-Origin', '*')],
                             content_type='application/json', dumps=json.dumps)
-

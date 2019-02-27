@@ -5,4 +5,5 @@ def setup_routes(app):
     app.router.add_get('/object_classes', object_classes)
     app.router.add_get('/representation', representation)
     app.router.add_get('/group_representation', group_representation)
+    app.router.add_get('/main', main)
 
