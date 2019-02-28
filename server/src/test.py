@@ -72,3 +72,14 @@ for note in notes:
     print(note["id"])
     for event in note["events"]:
         print(event)
+
+
+#with open("static/groups.json", "w", encoding="utf-8") as file:
+#    print("good")
+
+import os
+dirname = os.path.dirname(__file__)
+filename = os.path.join(dirname, 'static/')
+print(dirname)
+print(filename)
+

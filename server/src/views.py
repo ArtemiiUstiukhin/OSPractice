@@ -75,16 +75,6 @@ async def representation(request):
     return web.json_response(data=result, headers=[('Access-Control-Allow-Origin', '*')],
                             content_type='application/json', dumps=json.dumps)
 
-async def replace_groups(result):
-    str = json.dumps(result)
-    str = str.replace("DEVICE_GROUP_ID","id")
-    str = str.replace("GROUP_NAME","name")
-    str = str.replace("GROUP_REMARK","remark")
-    str = str.replace("GROUP_TYPE_ID","type")
-    final = json.loads(str)
-    return  final
-
-
 async def group_representation_old(request):
     sql = '''select dg.device_group_id,
                     dg.par_group_id,
@@ -108,21 +98,11 @@ async def group_representation_old(request):
     return web.json_response(data=groups, headers=[('Access-Control-Allow-Origin', '*')],
                             content_type='application/json', dumps=json.dumps)
 
-async def replace_devices(result):
-    str = json.dumps(result)
-    str = str.replace("DEVICE_ID","id")
-    str = str.replace("DEVICE_TYPE","type")
-    str = str.replace("NAME","name")
-    str = str.replace("GROUP_ID","grid")
-    final = json.loads(str)
-    return  final
-
-
 async def group_representation(request):
 
     #работа с группами 
 
-    sql = '''select dg.device_group_id,
+    sql_recurce = '''select dg.device_group_id,
                     dg.par_group_id,
                     dg.group_name,
                     dg.group_remark,
@@ -130,6 +110,15 @@ async def group_representation(request):
              from os_eqm.device_groups dg
              connect by prior dg.device_group_id = dg.par_group_id
           '''
+
+    sql = '''select dg.device_group_id,
+                    dg.par_group_id,
+                    dg.group_name,
+                    dg.group_remark,
+                    dg.group_type_id
+             from os_eqm.device_groups dg
+          '''
+
     try:
         db_url = DSN.format(**config['oracle'])
         conn = cx_Oracle.connect(db_url)
@@ -141,18 +130,19 @@ async def group_representation(request):
     finally:
         cursor.close()
 
-    str = json.dumps(result)
-    str = str.replace("DEVICE_GROUP_ID","id")
-    str = str.replace("GROUP_NAME","name")
-    str = str.replace("GROUP_REMARK","remark")
-    str = str.replace("GROUP_TYPE_ID","type")
-    groups = json.loads(str)
+    st = json.dumps(result)
+    st = st.replace("DEVICE_GROUP_ID","id")
+    st = st.replace("GROUP_NAME","name")
+    st = st.replace("GROUP_REMARK","remark")
+    st = st.replace("GROUP_TYPE_ID","type")
+    groups = json.loads(st)
 
     for group in groups:
         group.setdefault("children",[])
 
+    groups_copy = groups
     with open("src/static/groups.json", "w", encoding="utf-8") as file:
-        json.dump(groups, file)
+        json.dump(groups_copy, file)
 
     #работа с девайсами
 
@@ -174,16 +164,13 @@ async def group_representation(request):
     finally:
         cursor.close()
 
-    str = json.dumps(resultd)
-    str = str.replace("DEVICE_ID","id")
-    str = str.replace("DEVICE_TYPE","type")
-    str = str.replace("NAME","name")
-    str = str.replace("GROUP_ID","grid")
-    str = str.replace("REMARK","remark")
-    devices = json.loads(str)
-
-    with open("src/static/devices.json", "w", encoding="utf-8") as file:
-                json.dump(devices, file)
+    st = json.dumps(resultd)
+    st = st.replace("DEVICE_ID","id")
+    st = st.replace("DEVICE_TYPE","type")
+    st = st.replace("DEVICE_NAME","name")
+    st = st.replace("GROUP_ID","grid")
+    st = st.replace("REMARK","remark")
+    devices = json.loads(st)
 
     for device in devices:
         notes = []
@@ -197,9 +184,9 @@ async def group_representation(request):
                     event.setdefault("id",j)
                     event_data = str(random.randint(1,30))+"."+str(random.randint(1,12))+"."+str(random.randint(2000,2018))
                     event.setdefault("data",event_data)
-                    device = "device"+str(j)
-                    event.setdefault("device",device)
-                    event_ip = str(random.randint(1,255))+"."+str(random.randint(0,255))+"."+str(random.randint(0,255))+"."+str(random.ran$
+                    device_name = "device"+str(j)
+                    event.setdefault("device",device_name)
+                    event_ip = str(random.randint(1,255))+"."+str(random.randint(0,255))+"."+str(random.randint(0,255))+"."+str(random.randint(0,256))
                     event.setdefault("ip",event_ip)
                     priority = random.randint(0,100)
                     event.setdefault("priority",priority)
@@ -207,10 +194,14 @@ async def group_representation(request):
             note.setdefault("events",events)
             notes.append(note)
         device.setdefault("notes",notes)
+
+    devices_copy = devices
+    with open("src/static/devices.json", "w", encoding="utf-8") as file:
+        json.dump(devices_copy, file)
     #работа с классами
 
     sql = """select dc.device_class_id, dc.name
-             from device_classes dc
+             from os_eqm.device_classes dc
           """
     try:
         db_url = DSN.format(**config['oracle'])
@@ -223,10 +214,10 @@ async def group_representation(request):
     finally:
         cursor.close()
 
-    str = json.dumps(resultc)
-    str = str.replace("DEVICE_CLASS_ID","id")
-    str = str.replace("GROUP_NAME","name")
-    classes = json.loads(str)
+    st = json.dumps(resultc)
+    st = st.replace("DEVICE_CLASS_ID","id")
+    st = st.replace("NAME","name")
+    classes = json.loads(st)
 
     for obj in classes:
         obj.setdefault("children",[])
@@ -255,8 +246,8 @@ async def create_class_list(request):
     #работа с типами
 
     sql = '''select dt.device_class,
-                    dt.device_type_id, 
-                    dt.name, 
+                    dt.device_type_id,
+                    dt.name,
                     dt.remark
              from os_eqm.device_types dt
           '''
@@ -285,7 +276,7 @@ async def create_class_list(request):
                             content_type='application/json', dumps=json.dumps)
 
 
-async def create_group_list():
+async def create_group_list(request):
     group_path = 'src/static/groups.json'
     device_path = 'src/static/devices.json'
     groups = json.loads(open(group_path).read())

@@ -110,10 +110,10 @@
             ViewModeSwitch: function(item){
                 if(item.tab=='class'){
                     this.$store.dispatch('isClass');
-		    this.$store.dispatch('isGroups',{sort_type:'class'});
+		    
                 }else if(item.tab=='group'){
                     this.$store.dispatch('isGroup');
-		    this.$store.dispatch('isGroups',{sort_type:'group'});
+		    
                 }
             },
             RootGroupSelector: function(){
