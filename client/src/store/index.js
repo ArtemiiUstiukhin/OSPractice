@@ -1,4 +1,4 @@
-import Vue from 'vue'
+TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string. Received type numberimport Vue from 'vue'
 import Vuex from 'vuex'
 import { Event } from '../api/events'
 import {

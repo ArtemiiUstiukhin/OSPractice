@@ -7,19 +7,6 @@ import json
 # Connect string format: [username]/[password]@//[hostname]:[port]/[DB service name]
 DSN = "{user}/{password}@//{host}:{port}/{database}"
 
-async def dbquery(statement):
-    try:
-        db_url = DSN.format(**config['oracle'])
-        conn = cx_Oracle.connect(db_url)
-        cursor = conn.cursor()
-        row = cursor.execute(statement)
-        result = None
-        if row:
-            result = [dict(zip([desc[0] for desc in row.description], col)) for col in row.fetchall()]
-    finally:
-        cursor.close()
-    return result
-
 async def main(request):
     sortby_type = request.message.url.query['sortby']
     #print(sortby_type)
@@ -33,14 +20,6 @@ async def main(request):
     headers = {'Access-Control-Allow-Origin': '*'}
     return web.json_response(jobj,headers=headers)
 
-async def replace_classes(result):
-    str = json.dumps(result)
-    str = str.replace("DEVICE_CLASS_ID","id")
-    str = str.replace("NAME","name")
-    final = json.loads(str)
-    return  final
-
-
 async def object_classes(request):
     sql = """select dc.device_class_id, dc.name
              from device_classes dc
@@ -51,8 +30,6 @@ async def object_classes(request):
     result = adddevices(result)
     return web.json_response(data=replace_classes(result), headers=[('Access-Control-Allow-Origin', '*')],
                             content_type='application/json', dumps=json.dumps)
-
-async def adddevices(jsonobj):
 
 
 async def object_types(request):
@@ -141,7 +118,8 @@ async def get_all_devices():
     result = dbquery(sql)
     return replace_devices(result)
 
-
+with open("static/new.json", "w", encoding="utf-8") as file:
+                json.dump(jobj, file)
 async def replace_devices(result):
     str = json.dumps(result)
     str = str.replace("DEVICE_ID","id")
@@ -153,6 +131,9 @@ async def replace_devices(result):
 
 
 async def group_representation(request):
+
+    #работа с группами 
+
     sql = '''select dg.device_group_id,
                     dg.par_group_id,
                     dg.group_name,
@@ -181,6 +162,12 @@ async def group_representation(request):
 
     for group in groups:
         group.setdefault("children",[])
+
+    with open("src/static/groups.json", "w", encoding="utf-8") as file:
+        json.dump(groups, file)
+
+    #работа с девайсами
+
     sql = '''SELECT d.DEVICE_ID,
                     d.DEVICE_TYPE,
                     d.GROUP_ID,
@@ -206,6 +193,38 @@ async def group_representation(request):
     str = str.replace("GROUP_ID","grid")
     devices = json.loads(str)
 
+    with open("src/static/devices.json", "w", encoding="utf-8") as file:
+                json.dump(devices, file)
+
+    #работа с классами
+
+    sql = """select dc.device_class_id, dc.name
+             from device_classes dc
+          """
+    try:
+        db_url = DSN.format(**config['oracle'])
+        conn = cx_Oracle.connect(db_url)
+        cursor = conn.cursor()
+        row = cursor.execute(sql)
+        resultd = None
+        if row:
+            resultc = [dict(zip([desc[0] for desc in row.description], col)) for col in row.fetchall()]
+    finally:
+        cursor.close()
+
+    str = json.dumps(resultc)
+    str = str.replace("DEVICE_CLASS_ID","id")
+    str = str.replace("GROUP_NAME","name")
+    classes = json.loads(str)
+
+    for obj in classes:
+        obj.setdefault("children",[])
+
+    with open("src/static/classes.json", "w", encoding="utf-8") as file:
+        json.dump(classes, file)
+
+    #распихиваем девайсы по группам
+
     for device in devices:
         for group in groups:
             if device["grid"]==group["id"]:
@@ -215,3 +234,57 @@ async def group_representation(request):
     return web.json_response(data=groups, headers=[('Access-Control-Allow-Origin', '*')],
                             content_type='application/json', dumps=json.dumps)
 
+
+async def create_class_list(request):
+    class_path = 'src/static/classes.json'
+    device_path = 'src/static/devices.json'
+    classes = json.loads(open(class_path).read())
+    devices = json.loads(open(device_path).read())
+
+    #работа с типами
+
+    sql = '''select dt.device_class,
+                    dt.device_type_id, 
+                    dt.name, 
+                    dt.remark
+             from os_eqm.device_types dt
+          '''
+    try:
+        db_url = DSN.format(**config['oracle'])
+        conn = cx_Oracle.connect(db_url)
+        cursor = conn.cursor()
+        row = cursor.execute(sql)
+        result = None
+        if row:
+            result = [dict(zip([desc[0] for desc in row.description], col)) for col in row.fetchall()]
+    finally:
+        cursor.close()
+
+    types = {}
+    for type in resilt:
+        types.setdefault(type["DEVICE_TYPE_ID"],type["DEVICE_CLASS"])
+
+    for device in devices:
+        for clas in classes:
+            if types[device["type"]]==clas["id"]:
+                clas["children"].append(device)
+                break
+
+    return web.json_response(data=classes, headers=[('Access-Control-Allow-Origin', '*')],
+                            content_type='application/json', dumps=json.dumps)
+
+
+async def create_group_list():
+    group_path = 'src/static/groups.json'
+    device_path = 'src/static/devices.json'
+    groups = json.loads(open(group_path).read())
+    devices = json.loads(open(device_path).read())
+
+    for device in devices:
+        for group in groups:
+            if device["grid"]==group["id"]:
+                group["children"].append(device)
+                break
+
+    return web.json_response(data=groups, headers=[('Access-Control-Allow-Origin', '*')],
+                            content_type='application/json', dumps=json.dumps)

@@ -1,0 +1,1 @@
+[{"id": "group_id", "type": "group_type", "children": [{"id": "obj_id", "type": "obj_type", "notes": [{"id": "note_id", "events": [{"id": "event_id", "ip": "24", "device": "6.0", "priority": "4.0", "data": "event_data"}]}], "name": "obj_name", "remark": "obj_remark"}], "name": "group_name", "remark": "group_remark"}]

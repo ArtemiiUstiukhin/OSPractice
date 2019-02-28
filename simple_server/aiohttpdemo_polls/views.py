@@ -16,5 +16,15 @@ async def stat(request):
 	else:
 		static_path = 'static/test.json'
 	jobj = json.loads(open(static_path).read())
+	with open("static/new.json", "w", encoding="utf-8") as file:
+                json.dump(jobj, file)
 	headers = {'Access-Control-Allow-Origin': '*'}
 	return web.json_response(jobj,headers=headers)
+
+#async def create_class(request):
+#	static_path = 'static/final_class.json'
+#	jobj = json.loads(open(static_path).read())
+#	with open("static/new.json", "w", encoding="utf-8") as file:
+#		json.dump(jobj, file)
+ #       headers = {'Access-Control-Allow-Origin': '*'}
+#	return web.json_response(jobj,headers=headers)

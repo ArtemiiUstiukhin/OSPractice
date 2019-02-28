@@ -33,9 +33,4 @@ str = str.replace("name","NAMEw")
 final = json.loads(str)
 print(final)
 print(type(final))
-ty = {}
-print(type(ty))
-ty.setdefault(js[0]["REMARK"],js[0]["NAME"])
-print(ty)
-print(type(ty))
-print(ty["nice"])
+

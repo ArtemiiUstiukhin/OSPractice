@@ -410,14 +410,14 @@ export default{
         isGroups(context,payload){
 	   console.log(payload);
            axios
-            .get("http://localhost:8000/group_representation")
+            .get("http://localhost:8000/first_list_creating")
             //({method:'get',
-	     // url:'http://localhost:8000/group_representation',
-	      //params: { sortby: payload.sort_type }})
+	    // url:'http://localhost:8080/statj',
+	    //  params: { sortby: payload.sort_type }})
             .then(response =>{
 		  console.log(response.data);
 		  context.commit('set_item_list', response.data);
-		  console.log("foo isGroup");
+		  console.log("first list creating");
                   })
             .catch(error =>{
                   console.log(error);
@@ -426,10 +426,34 @@ export default{
             .finally(() => (this.loading = false));
         },
         isClass(){
-            console.log("isClass action")
+            console.log("creating class list")
+	    axios
+            .get("http://localhost:8000/set_class_list")
+            .then(response =>{
+                  console.log(response.data);
+                  context.commit('set_item_list', response.data);
+                  console.log("Item class list creted!");
+                  })
+            .catch(error =>{
+                  console.log(error);
+                  this.errored =true;
+                  })
+            .finally(() => (this.loading = false));
         },
         isGroup(){
-            console.log("isGroup action")
+            console.log("creating group list")
+            axios
+            .get("http://localhost:8000/set_group_list")
+            .then(response =>{
+                  console.log(response.data);
+                  context.commit('set_item_list', response.data);
+                  console.log("Item group list creted!");
+                  })
+            .catch(error =>{
+                  console.log(error);
+                  this.errored =true;
+                  })
+            .finally(() => (this.loading = false));
         },
         isRootGroup(context, payload){
             context.commit('set_root_group', payload);
