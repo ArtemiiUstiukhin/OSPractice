@@ -7,6 +7,7 @@
           "id": "obj_id",
           "name": "obj_name",
 	  "type": "obj_type",
+	  "remark":"obj_remark",
           "notes": [
             {
               "id": "note_id",

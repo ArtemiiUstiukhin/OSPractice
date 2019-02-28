@@ -3,6 +3,7 @@ from settings import config
 
 import cx_Oracle
 import json
+import random
 
 # Connect string format: [username]/[password]@//[hostname]:[port]/[DB service name]
 DSN = "{user}/{password}@//{host}:{port}/{database}"
@@ -107,19 +108,6 @@ async def group_representation_old(request):
     return web.json_response(data=groups, headers=[('Access-Control-Allow-Origin', '*')],
                             content_type='application/json', dumps=json.dumps)
 
-async def get_all_devices():
-    sql = '''SELECT d.DEVICE_ID,
-                    d.DEVICE_TYPE,
-                    d.GROUP_ID,
-                    d."remark",
-                    d."device_name"
-            from OS_EQM.DEVICES d
-          '''
-    result = dbquery(sql)
-    return replace_devices(result)
-
-with open("static/new.json", "w", encoding="utf-8") as file:
-                json.dump(jobj, file)
 async def replace_devices(result):
     str = json.dumps(result)
     str = str.replace("DEVICE_ID","id")
@@ -191,11 +179,34 @@ async def group_representation(request):
     str = str.replace("DEVICE_TYPE","type")
     str = str.replace("NAME","name")
     str = str.replace("GROUP_ID","grid")
+    str = str.replace("REMARK","remark")
     devices = json.loads(str)
 
     with open("src/static/devices.json", "w", encoding="utf-8") as file:
                 json.dump(devices, file)
 
+    for device in devices:
+        notes = []
+        for i in range(1,random.randint(2,4)):
+            note = {}
+            note.setdefault("id",i)
+            events = []
+            note.setdefault("events",events)
+                for j in range(1,random.randint(2,4)):
+                    event = {}
+                    event.setdefault("id",j)
+                    event_data = str(random.randint(1,30))+"."+str(random.randint(1,12))+"."+str(random.randint(2000,2018))
+                    event.setdefault("data",event_data)
+                    device = "device"+str(j)
+                    event.setdefault("device",device)
+                    event_ip = str(random.randint(1,255))+"."+str(random.randint(0,255))+"."+str(random.randint(0,255))+"."+str(random.ran$
+                    event.setdefault("ip",event_ip)
+                    priority = random.randint(0,100)
+                    event.setdefault("priority",priority)
+                events.append(event)
+            note.setdefault("events",events)
+            notes.append(note)
+        device.setdefault("notes",notes)
     #работа с классами
 
     sql = """select dc.device_class_id, dc.name
@@ -288,3 +299,5 @@ async def create_group_list():
 
     return web.json_response(data=groups, headers=[('Access-Control-Allow-Origin', '*')],
                             content_type='application/json', dumps=json.dumps)
+
+
