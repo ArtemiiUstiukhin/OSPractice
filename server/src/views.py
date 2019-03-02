@@ -168,6 +168,7 @@ async def group_representation(request):
     st = st.replace("DEVICE_ID","id")
     st = st.replace("DEVICE_TYPE","type")
     st = st.replace("DEVICE_NAME","name")
+    st = st.replace("device_name","name")
     st = st.replace("GROUP_ID","grid")
     st = st.replace("REMARK","remark")
     devices = json.loads(st)
