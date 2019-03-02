@@ -2,7 +2,7 @@ import pathlib
 import yaml
 
 BASE_DIR = pathlib.Path.cwd()
-config_path = BASE_DIR / 'config' / 'config.yaml'
+config_path = BASE_DIR / 'src' / 'config' / 'config.yaml'
 
 def get_config(path):
     with open(path) as f:
