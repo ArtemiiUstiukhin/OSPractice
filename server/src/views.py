@@ -84,16 +84,16 @@ async def group_representation_old(request):
              from os_eqm.device_groups dg
              connect by prior dg.device_group_id = dg.par_group_id
           '''
-    groups = dbquery(sql)
-    groups = replace_groups(groups)
-    for group in groups:
-        group.setdefault("children",[])
-    devices = get_all_devices()
-    for device in devices:
-        for group in groups:
-            if device["grid"]==group["id"]:
-                group["children"].append(device)
-                break
+    try:
+        db_url = DSN.format(**config['oracle'])
+        conn = cx_Oracle.connect(db_url)
+        cursor = conn.cursor()
+        row = cursor.execute(sql)
+        result = None
+        if row:
+            result = [dict(zip([desc[0] for desc in row.description], col)) for col in row.fetchall()]
+    finally:
+        cursor.close()
 
     return web.json_response(data=groups, headers=[('Access-Control-Allow-Origin', '*')],
                             content_type='application/json', dumps=json.dumps)
