@@ -53,7 +53,7 @@
             active: function(){
                 if (this.active.length) {
                     this.$store.dispatch('stateCurrentObj',this.active[0])
-                    this.$store.dispatch('showOnMap',this.active[0].id)
+                    //this.$store.dispatch('showOnMap',this.active[0].id)
                     console.log("remark: "+this.remark)
                 }
             }

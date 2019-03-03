@@ -85,10 +85,11 @@ export default{
                   })
             .finally(() => (this.loading = false));
         },
-        isClass(){
+        isClass(context){
             console.log("creating class list")
 	    axios
             .get("http://localhost:8000/set_class_list")
+            //.get("http://localhost:8080/class")
             .then(response =>{
                   console.log(response.data);
                   context.commit('set_item_list', response.data);
@@ -100,10 +101,11 @@ export default{
                   })
             .finally(() => (this.loading = false));
         },
-        isGroup(){
+        isGroup(context){
             console.log("creating group list")
             axios
-            .get("http://localhost:8000/set_group_list")
+            .get("http://localhost:8000/first_list_creating")
+            //.get("http://localhost:8080/group")
             .then(response =>{
                   console.log(response.data);
                   context.commit('set_item_list', response.data);

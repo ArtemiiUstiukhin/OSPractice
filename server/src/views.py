@@ -136,9 +136,9 @@ async def group_representation(request):
     for group in groups:
         group.setdefault("children",[])
 
-    groups_copy = groups
-    with open("src/static/groups.json", "w", encoding="utf-8") as file:
-        json.dump(groups_copy, file)
+#    groups_copy = groups
+#    with open("src/static/groups.json", "w", encoding="utf-8") as file:
+#        json.dump(groups_copy, file)
 
     #работа с девайсами
 
@@ -193,36 +193,10 @@ async def group_representation(request):
         device.setdefault("notes",notes)
 
     devices_copy = devices
-    with open("src/static/devices.json", "w", encoding="utf-8") as file:
-        json.dump(devices_copy, file)
-    #работа с классами
+#    with open("src/static/devices.json", "w", encoding="utf-8") as file:
+#        json.dump(devices_copy, file)
 
-    sql = """select dc.device_class_id, dc.name
-             from os_eqm.device_classes dc
-          """
-    try:
-        db_url = DSN.format(**config['oracle'])
-        conn = cx_Oracle.connect(db_url)
-        cursor = conn.cursor()
-        row = cursor.execute(sql)
-        resultd = None
-        if row:
-            resultc = [dict(zip([desc[0] for desc in row.description], col)) for col in row.fetchall()]
-    finally:
-        cursor.close()
-
-    st = json.dumps(resultc)
-    st = st.replace("DEVICE_CLASS_ID","id")
-    st = st.replace("NAME","name")
-    classes = json.loads(st)
-
-    for obj in classes:
-        obj.setdefault("children",[])
-
-    with open("src/static/classes.json", "w", encoding="utf-8") as file:
-        json.dump(classes, file)
-
-    #распихиваем девайсы по группам
+  #распихиваем девайсы по группам
 
     for device in devices:
         for group in groups:
@@ -275,12 +249,90 @@ async def group_representation(request):
 
 
 async def create_class_list(request):
-    class_path = 'src/static/classes.json'
-    device_path = 'src/static/devices.json'
-    classes = json.loads(open(class_path).read())
-    devices = json.loads(open(device_path).read())
+    #class_path = 'src/static/classes.json'
+    #device_path = 'src/static/devices.json'
+    #classes = json.loads(open(class_path).read())
+    #devices = json.loads(open(device_path).read())
 
-    #работа с типами
+    #загружаем девайсы 
+
+    sql = '''SELECT d.DEVICE_ID,
+                    d.DEVICE_TYPE,
+                    d.GROUP_ID,
+                    d."remark",
+                    d."device_name"
+            from OS_EQM.DEVICES d
+          '''
+    try:
+        db_url = DSN.format(**config['oracle'])
+        conn = cx_Oracle.connect(db_url)
+        cursor = conn.cursor()
+        row = cursor.execute(sql)
+        resultd = None
+        if row:
+            resultd = [dict(zip([desc[0] for desc in row.description], col)) for col $
+    finally:
+        cursor.close()
+
+    st = json.dumps(resultd)
+    st = st.replace("DEVICE_ID","id")
+    st = st.replace("DEVICE_TYPE","type")
+    st = st.replace("DEVICE_NAME","name")
+    st = st.replace("device_name","name")
+    st = st.replace("GROUP_ID","grid")
+    st = st.replace("REMARK","remark")
+    devices = json.loads(st)
+
+    #создаем события
+
+    for device in devices:
+        notes = []
+        for i in range(1,random.randint(2,4)):
+            note = {}
+            note.setdefault("id",i)
+            events = []
+            note.setdefault("events",events)
+            for j in range(1,random.randint(2,4)):
+                event = {}
+                event.setdefault("id",j)
+                event_data = str(random.randint(1,30))+"."+str(random.randint(1,12))+$
+                event.setdefault("data",event_data)
+                device_name = "device"+str(j)
+                event.setdefault("device",device_name)
+                event_ip = str(random.randint(1,255))+"."+str(random.randint(0,255))+$
+                event.setdefault("ip",event_ip)
+                priority = random.randint(0,100)
+                event.setdefault("priority",priority)
+                events.append(event)
+            note.setdefault("events",events)
+            notes.append(note)
+        device.setdefault("notes",notes)
+
+    #загружаем классы
+
+    sql = """select dc.device_class_id, dc.name
+             from os_eqm.device_classes dc
+          """
+    try:
+        db_url = DSN.format(**config['oracle'])
+        conn = cx_Oracle.connect(db_url)
+        cursor = conn.cursor()
+        row = cursor.execute(sql)
+        resultd = None
+        if row:
+            resultc = [dict(zip([desc[0] for desc in row.description], col)) for col $
+    finally:
+        cursor.close()
+
+    st = json.dumps(resultc)
+    st = st.replace("DEVICE_CLASS_ID","id")
+    st = st.replace("NAME","name")
+    classes = json.loads(st)
+
+    for obj in classes:
+        obj.setdefault("children",[])
+
+    # загружаем типы
 
     sql = '''select dt.device_class,
                     dt.device_type_id,
@@ -314,10 +366,10 @@ async def create_class_list(request):
 
 
 async def create_group_list(request):
-    group_path = 'src/static/groups.json'
-    device_path = 'src/static/devices.json'
-    groups = json.loads(open(group_path).read())
-    devices = json.loads(open(device_path).read())
+    #group_path = 'src/static/groups.json'
+    #device_path = 'src/static/devices.json'
+    #groups = json.loads(open(group_path).read())
+    #devices = json.loads(open(device_path).read())
 
     for device in devices:
         for group in groups:
