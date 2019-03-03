@@ -119,7 +119,7 @@ async def group_representation(request):
         db_url = DSN.format(**config['oracle'])
         conn = cx_Oracle.connect(db_url)
         cursor = conn.cursor()
-        row = cursor.execute(sql)
+        row = cursor.execute(sql_recurce)
         result = None
         if row:
             result = [dict(zip([desc[0] for desc in row.description], col)) for col in row.fetchall()]
@@ -231,7 +231,7 @@ async def group_representation(request):
                 break
 
     parid = 'PAR_GROUP_ID'
-    id = 'DEVICE_GROUP_ID'
+    id = 'id'
     i = 0
     pid = {}
     root = None
@@ -245,6 +245,7 @@ async def group_representation(request):
             if pid[i][0]==g[parid]:
                 index = pid.setdefault(i+1,[g[id],-1])
                 pid[i+1]=[g[id],index[1]+1]
+                pid[2]=[0,len(g["children"])-1]
                 break
             else:
                 if pid.get(i+1)!=None:
@@ -252,6 +253,7 @@ async def group_representation(request):
                 i = i-1
         if i==0:
             pid[1]=[g[id],groups.index(g)]
+            pid[2]=[0,len(g["children"])-1]
             continue
         j = i
         root = groups
