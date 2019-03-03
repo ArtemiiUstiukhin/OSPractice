@@ -145,8 +145,8 @@ async def group_representation(request):
     sql = '''SELECT d.DEVICE_ID,
                     d.DEVICE_TYPE,
                     d.GROUP_ID,
-                    d."remark",
-                    d."device_name"
+                    d."REMARK",
+                    d."DEVICE_NAME"
             from OS_EQM.DEVICES d
           '''
     try:
@@ -259,8 +259,8 @@ async def create_class_list(request):
     sql = '''SELECT d.DEVICE_ID,
                     d.DEVICE_TYPE,
                     d.GROUP_ID,
-                    d."remark",
-                    d."device_name"
+                    d."REMARK",
+                    d."DEVICE_NAME"
             from OS_EQM.DEVICES d
           '''
     try:
