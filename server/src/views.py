@@ -295,11 +295,11 @@ async def create_class_list(request):
             for j in range(1,random.randint(2,4)):
                 event = {}
                 event.setdefault("id",j)
-                event_data = str(random.randint(1,30))+"."+str(random.randint(1,12))+$
+                event_data = str(random.randint(1,30))+"."+str(random.randint(1,12))+"."+str(random.randint(2000,2018))
                 event.setdefault("data",event_data)
                 device_name = "device"+str(j)
                 event.setdefault("device",device_name)
-                event_ip = str(random.randint(1,255))+"."+str(random.randint(0,255))+$
+                event_ip = str(random.randint(1,255))+"."+str(random.randint(0,255))+"."+str(random.randint(0,255))+"."+str(random.randint(0,256))
                 event.setdefault("ip",event_ip)
                 priority = random.randint(0,100)
                 event.setdefault("priority",priority)
@@ -320,7 +320,7 @@ async def create_class_list(request):
         row = cursor.execute(sql)
         resultd = None
         if row:
-            resultc = [dict(zip([desc[0] for desc in row.description], col)) for col $
+            resultc = [dict(zip([desc[0] for desc in row.description], col)) for col row.fetchall()]
     finally:
         cursor.close()
 
@@ -357,9 +357,10 @@ async def create_class_list(request):
 
     for device in devices:
         for clas in classes:
-            if types[device["type"]]==clas["id"]:
-                clas["children"].append(device)
-                break
+            if device["type"] in types.keys():
+                if types[device["type"]]==clas["id"]:
+                    clas["children"].append(device)
+                    break
 
     return web.json_response(data=classes, headers=[('Access-Control-Allow-Origin', '*')],
                             content_type='application/json', dumps=json.dumps)
