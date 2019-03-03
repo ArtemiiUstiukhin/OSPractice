@@ -233,19 +233,19 @@ async def group_representation(request):
     parid = 'PAR_GROUP_ID'
     id = 'id'
     i = 0
-    pid = {}
+    pid = {1:[0,0]}
     root = None
     idfd = []
     print(len(groups))
     count = 0
     for g in groups:
         #g.setdefault("children",[])
-        i = len(pid)
+        i = len(pid)-1
         while i!=0:
             if pid[i][0]==g[parid]:
                 index = pid.setdefault(i+1,[g[id],-1])
                 pid[i+1]=[g[id],index[1]+1]
-                pid[2]=[0,len(g["children"])-1]
+                pid[i+2]=[0,len(g["children"])-1]
                 break
             else:
                 if pid.get(i+1)!=None:
