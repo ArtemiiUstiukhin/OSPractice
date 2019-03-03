@@ -70,6 +70,7 @@ export default{
 	   console.log(payload);
            axios
             .get("http://localhost:8000/first_list_creating")
+            //.get("http://localhost:8080/index")
             //({method:'get',
 	    // url:'http://localhost:8080/statj',
 	    //  params: { sortby: payload.sort_type }})

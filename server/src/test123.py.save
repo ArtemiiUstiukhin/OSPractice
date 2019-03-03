@@ -1,0 +1,5 @@
+import urllib.request
+import json
+response = urllib.request.urlopen('http://localhost:8000with open("src/static/classes.json", "w", encoding/get')
+with open("rectest.json", "w", encoding="utf-8") as file:
+    json.dump(response, file)

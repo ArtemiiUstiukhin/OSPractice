@@ -10,13 +10,9 @@ DSN = "{user}/{password}@//{host}:{port}/{database}"
 
 async def main(request):
     sortby_type = request.message.url.query['sortby']
-    #print(sortby_type)
-    if (sortby_type=='class'):
-        static_path = 'static/final_class.json'
-    elif(sortby_type=='group'):
-        static_path = 'static/final_group.json'
-    else:
-        static_path = 'static/test.json'
+
+    static_path = 'src/result.json'
+
     jobj = json.loads(open(static_path).read())
     headers = {'Access-Control-Allow-Origin': '*'}
     return web.json_response(jobj,headers=headers)
@@ -95,7 +91,7 @@ async def group_representation_old(request):
     finally:
         cursor.close()
 
-    return web.json_response(data=groups, headers=[('Access-Control-Allow-Origin', '*')],
+    return web.json_response(data=result, headers=[('Access-Control-Allow-Origin', '*')],
                             content_type='application/json', dumps=json.dumps)
 
 async def group_representation(request):
@@ -180,17 +176,17 @@ async def group_representation(request):
             note.setdefault("id",i)
             events = []
             note.setdefault("events",events)
-                for j in range(1,random.randint(2,4)):
-                    event = {}
-                    event.setdefault("id",j)
-                    event_data = str(random.randint(1,30))+"."+str(random.randint(1,12))+"."+str(random.randint(2000,2018))
-                    event.setdefault("data",event_data)
-                    device_name = "device"+str(j)
-                    event.setdefault("device",device_name)
-                    event_ip = str(random.randint(1,255))+"."+str(random.randint(0,255))+"."+str(random.randint(0,255))+"."+str(random.randint(0,256))
-                    event.setdefault("ip",event_ip)
-                    priority = random.randint(0,100)
-                    event.setdefault("priority",priority)
+            for j in range(1,random.randint(2,4)):
+                event = {}
+                event.setdefault("id",j)
+                event_data = str(random.randint(1,30))+"."+str(random.randint(1,12))+"."+str(random.randint(2000,2018))
+                event.setdefault("data",event_data)
+                device_name = "device"+str(j)
+                event.setdefault("device",device_name)
+                event_ip = str(random.randint(1,255))+"."+str(random.randint(0,255))+"."+str(random.randint(0,255))+"."+str(random.randint(0,256))
+                event.setdefault("ip",event_ip)
+                priority = random.randint(0,100)
+                event.setdefault("priority",priority)
                 events.append(event)
             note.setdefault("events",events)
             notes.append(note)
@@ -234,7 +230,45 @@ async def group_representation(request):
                 group["children"].append(device)
                 break
 
-    return web.json_response(data=groups, headers=[('Access-Control-Allow-Origin', '*')],
+    parid = 'PAR_GROUP_ID'
+    id = 'DEVICE_GROUP_ID'
+    i = 0
+    pid = {}
+    root = None
+    idfd = []
+    print(len(groups))
+    count = 0
+    for g in groups:
+        #g.setdefault("children",[])
+        i = len(pid)
+        while i!=0:
+            if pid[i][0]==g[parid]:
+                index = pid.setdefault(i+1,[g[id],-1])
+                pid[i+1]=[g[id],index[1]+1]
+                break
+            else:
+                if pid.get(i+1)!=None:
+                    pid.pop(i+1)
+                i = i-1
+        if i==0:
+            pid[1]=[g[id],groups.index(g)]
+            continue
+        j = i
+        root = groups
+        while i!=0:
+            root = root[pid[j-i+1][1]]["children"]
+            i = i-1
+        root.append(g)
+        idfd.append(g[id])
+    count = 0
+    idfd.sort()
+    root = groups.copy()
+    for g in groups:
+        if g[id] in idfd:
+            root.remove(g)
+
+
+    return web.json_response(data=root, headers=[('Access-Control-Allow-Origin', '*')],
                             content_type='application/json', dumps=json.dumps)
 
 

@@ -3,8 +3,16 @@ import json
 
 
 async def index(request):
-	print(request)
-	return web.Response(text='Hello Aiohttp!')
+        static_path = '../server/src/result.json'
+        jobj = json.loads(open(static_path).read())
+        st = json.dumps(jobj)
+        st = st.replace("DEVICE_GROUP_ID","id")
+        st = st.replace("GROUP_NAME","name")
+        st = st.replace("GROUP_REMARK","remark")
+        st = st.replace("GROUP_TYPE_ID","type")
+        groups = json.loads(st)
+        headers = {'Access-Control-Allow-Origin': '*'}
+        return web.json_response(groups,headers=headers)
 
 async def stat(request):
 	sortby_type = request.message.url.query['sortby']

@@ -6,8 +6,8 @@
     <v-container  fluid grid-list-md  >
       <v-layout align-space-between justify-center column fill-height>
         <v-layout>
-            <v-flex d-flex sm3 md3 class="form-top">
-                <v-card color="grey lighten-4" light class="CardTextPadding">
+            <v-flex d-flex sm4 md3 class="form-top" >
+                <v-card  color="grey lighten-4" light class="CardTextPadding">
                     <v-card-title color="blue-grey darken-1" class="title px-1 pb-2 pt-0">Навигация  
                         <v-spacer></v-spacer> 
                             <v-menu bottom left>
@@ -83,7 +83,6 @@
     
     export default{
         data:()=> ({
-
              nav_view_mode: [
                 { title: 'Классы' ,
                     tab: 'class'},
@@ -110,10 +109,11 @@
             ViewModeSwitch: function(item){
                 if(item.tab=='class'){
                     this.$store.dispatch('isClass');
-		    
+                    this.$store.dispatch('isGroups',{sort_type:'class'})
+                    
                 }else if(item.tab=='group'){
                     this.$store.dispatch('isGroup');
-		    
+                    this.$store.dispatch('isGroups',{sort_type:'group'})
                 }
             },
             RootGroupSelector: function(){
@@ -122,12 +122,13 @@
                 // Without setTimeout this.selectedRootGroup have a previous value
             }
         },
-	mounted: function(){
-		this.$nextTick(function (){
-			this.$store.dispatch('isGroups',{sort_type:'group'});
-			
-		})
-	},
+        mounted: function(){
+            this.$nextTick(function(){
+                this.$store.dispatch('isGroups',{sort_type:'group'})
+            })
+                
+           
+        },
         computed:{
             items(){
                 return this.$store.getters.getItems
@@ -141,7 +142,12 @@
             mapCoords(){
                 return this.$store.getters.getMapCoords
             },
-	}
+            
+            
+            
+            
+        }
+            
     }
 </script>
 
